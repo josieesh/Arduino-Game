@@ -1,4 +1,4 @@
-class Player {
+/*class Player {
   private: 
     int height;
 
@@ -45,5 +45,5 @@ void Obstacle::jump(int jumpHeight) {
   else {
     //do nothing ie keep the bottom two lights on
   }
-}
+}*/
 

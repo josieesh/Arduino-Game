@@ -1,6 +1,4 @@
 #include <Arduino.h>
-#include <Obstacle.ino>
-#include <Player.ino>
 
 volatile double sensorValue = 0;
 int interruptPin = 2;
@@ -12,9 +10,100 @@ int yCoord;
 
 
 
+
+class Obstacle {
+  private:
+    int height;
+    double interval;
+
+  public:
+    Obstacle();
+    void setHeight();
+    void setInterval();
+    int getHeight();
+    double getInterval();
+};
+
+Obstacle::Obstacle() {
+  setHeight();
+  setInterval();
+  
+}
+
+void Obstacle::setHeight() {
+  height = (int)random(3)+1;
+}
+
+int Obstacle::getHeight() {
+  return height;
+}
+
+void Obstacle::setInterval() {
+  interval = ((double)(random(200)+100))/100.0;
+}
+
+double Obstacle::getInterval() {
+  return interval;
+};
+
+
+
+/*class Player {
+  private: 
+    int height;
+
+  public: 
+    Player(int h);
+    void jump(int jumpHeight);
+}
+
+Player::Player(int h) {
+  height = h;
+}
+
+void Player::jump(int jumpHeight) {
+  if (jumpHeight == 2) {
+    //animate
+    //(1,2), (1,3)
+    //bring obstacle closer
+    //(1,3), (1,4)
+    //bring obstacle closer
+    //then come back down
+  }
+  else if(jumpHeight == 3){
+    //animate
+    //(1,2), (1,3)
+    //bring obstacle closer
+    //(1,3), (1,4)
+    //bring obstacle closer
+    //(1,4), (1,5)
+    //bring obstacle closer
+    //then come back down 
+  }
+  else if(jumpHeight ==4){
+    //animate
+    //(1,2), (1,3)
+    //bring obstacle closer
+    //(1,3), (1,4)
+    //bring obstacle closer
+    //(1,4), (1,5)
+    //bring obstacle closer
+    //(1,5), (1,6)
+    //bring obstacle closer
+    //then come back down 
+  }
+  else {
+    //do nothing ie keep the bottom two lights on
+  }
+};
+
+*/
+
+
+
+
 void setup() {
   Serial.begin(9600);
-  //attachInterrupt(digitalPinToInterrupt(interruptPin), readMic, CHANGE);
   Serial.println("Do not make noise, calibrating threshold value...");
   delay(1000);
   threshold = analogRead(A0);
@@ -26,20 +115,20 @@ void setup() {
 }
 void loop() {
   
-  /*Obstacle thing;
+  Obstacle thing;
   Serial.println(thing.getHeight());
   Serial.println("\ninterval:");
   Serial.println(thing.getInterval());
 
   createObstacle(thing);
 
-  delay(1000);
-  moveObstacle();
+  delay(3000);
+  /*moveObstacle();
 
   delay(1000);
-  moveObstacle(); */
+  moveObstacle(); *.
 
-  sensorValue = analogRead(A0);
+  /*sensorValue = analogRead(A0);
   Serial.println(sensorValue);
   if (sensorValue > threshold) {
     if (sensorValue < threshold +10) {
@@ -63,7 +152,7 @@ void loop() {
       //if not, move object closer to dude
     }
   } 
-  delay(500);
+  delay(500);*/
 }
 
 //interrupt does not work on analog in???
@@ -95,24 +184,24 @@ void createObstacle(Obstacle thing) {
 
   //height of 1:
   if(thing.getHeight() ==1) {
-    PORTD = B00100000;
-    PORTB = B111110;
+    PORTD = B11111110;
+    PORTB = B110000;
     xCoord =3;
     yCoord=1;
   }
 
   //height of 2:
   else if(thing.getHeight() == 2) {
-    PORTD = B00100000;
-    PORTB = B111100;
+    PORTD = B11111100;
+    PORTB = B110000;
     xCoord = 3;
     yCoord = 2;
   }
   
   //height of 3:
   else {
-    PORTD = B00100000;
-    PORTB = B111000;
+    PORTD = B11111000;
+    PORTB = B110000;
     xCoord = 3;
     yCoord = 3;
   }

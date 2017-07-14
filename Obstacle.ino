@@ -1,4 +1,4 @@
-class Obstacle {
+/*class Obstacle {
   private:
     int height;
     double interval;
@@ -31,4 +31,4 @@ void Obstacle::setInterval() {
 
 double Obstacle::getInterval() {
   return interval;
-}
+}*/
