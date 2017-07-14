@@ -122,11 +122,12 @@ void loop() {
 
   createObstacle(thing);
 
-  delay(3000);
-  /*moveObstacle();
-
-  delay(1000);
-  moveObstacle(); *.
+  delay(500);
+  for (int i = 0; i < 5; i ++) {
+    moveObstacle();
+    delay(500);
+  }
+  
 
   /*sensorValue = analogRead(A0);
   Serial.println(sensorValue);
@@ -168,41 +169,43 @@ void moveObstacle() {
   //move all obstacle LEDs by 1 x-coordinate to the left
   //ie decrement x-coordinate of all obstacle LEDs
   xCoord --;
-  Serial.println(xCoord);
-  PORTD = B00000000;
-  digitalWrite(xCoord+2, HIGH);
-  /*if (yCoord ==1) {
-    digitalWrite(8, HIGH);
+  PORTD = B11111111;
+  PORTB = B000000;
+  digitalWrite(xCoord+7, HIGH);
+  if (yCoord ==1) {
+    PORTD = B11111011;
   }
   else if(yCoord ==2) {
-    
-  } */
-  
+    PORTD = B11110011;
+  }
+  else if(yCoord ==3) {
+    PORTD = B11100011;
+  }
 }
 
 void createObstacle(Obstacle thing) {
 
   //height of 1:
-  if(thing.getHeight() ==1) {
-    PORTD = B11111110;
-    PORTB = B110000;
-    xCoord =3;
+  if(thing.getHeight() == 1) {
+    PORTD = B11111000;
+    PORTB = B010000;
+    xCoord =5;
     yCoord=1;
   }
 
   //height of 2:
   else if(thing.getHeight() == 2) {
-    PORTD = B11111100;
-    PORTB = B110000;
-    xCoord = 3;
+    PORTD = B11110000;
+    PORTB = B010000;
+    xCoord = 5;
     yCoord = 2;
   }
   
   //height of 3:
   else {
-    PORTD = B11111000;
-    PORTB = B110000;
-    xCoord = 3;
+    PORTD = B11100000;
+    PORTB = B010000;
+    xCoord = 5;
     yCoord = 3;
   }
   
