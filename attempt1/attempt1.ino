@@ -3,13 +3,10 @@
 volatile double sensorValue = 0;
 int interruptPin = 2;
 double threshold =0;
-int x [3];
-int y [4];
 int xCoord;
 int yCoord;
-
-
-
+int playerX;
+int playerY;
 
 class Obstacle {
   private:
@@ -122,6 +119,8 @@ void loop() {
 
   //createObstacle(thing);
   makeDude();
+  delay(500);
+  jumpDude(3);
 
   delay(5000);
   /*for (int i = 0; i < 5; i ++) {
@@ -165,15 +164,33 @@ void readMic () {
 void makeDude()
 {
   Serial.println("dude is made");
-  PORTB = B000001;
-  PORTD = B11110000;
+  PORTB = B000001; //pin 8 high
+  PORTD = B11110000; //pin 2, 3 low 
+  playerX = 8;
+  playerY = 2;
 }
 
-void jumpDude(int height, Obstacle thing) {
-  for (int i = thing.getHeight(); i<= height; i++)
+void jumpDude(int height) {
+  /*for (int i = thing.getHeight(); i<= height; i++)
   {
     digitalWrite (yCoord+7, LOW);
+  }*/
+  for (int i = playerY; i <= height + 1; i++)
+  {
+      digitalWrite (playerY, HIGH);
+      playerY ++;
+      digitalWrite (playerY + 1, LOW);
+      delay (500);
+      Serial.println ("jump dude : ");
+      Serial.print (i);
   }
+  /*digitalWrite (playerY, HIGH);
+  playerY ++;
+  digitalWrite (playerY + 1, LOW);
+  delay (500);
+  digitalWrite (playerY, HIGH);
+  playerY ++;
+  digitalWrite (playerY + 1, LOW);*/
 }
 
 void moveObstacle() {
