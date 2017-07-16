@@ -7,6 +7,8 @@ int xCoord;
 int yCoord;
 int playerX;
 int playerY;
+int decoder0 = 6;
+int decoder1 = 7;
 
 class Obstacle {
   private:
@@ -28,7 +30,7 @@ Obstacle::Obstacle() {
 }
 
 void Obstacle::setHeight() {
-  height = (int)random(3)+1;
+  height = (int)random(3)+2;
 }
 
 int Obstacle::getHeight() {
@@ -107,9 +109,9 @@ void setup() {
   Serial.print("Threshold value: ");
   Serial.println(threshold);
   DDRD = B11111110;
-  DDRB = B111111;
-    
+  DDRB = B111111;    
 }
+
 void loop() {
   
   Obstacle thing;
@@ -117,16 +119,14 @@ void loop() {
   Serial.println("\ninterval:");
   Serial.println(thing.getInterval());
 
-  //createObstacle(thing);
-  makeDude();
+  createObstacle(thing);
+  /*makeDude();
   delay(500);
-  jumpDude(3);
-
-  delay(5000);
-  /*for (int i = 0; i < 5; i ++) {
-    moveObstacle();
+  jumpDude(3);*/
+  for (int i = 0; i < 5; i ++) {
     delay(500);
-  }*/
+    moveObstacle();
+  }
   
 
   /*sensorValue = analogRead(A0);
@@ -171,10 +171,6 @@ void makeDude()
 }
 
 void jumpDude(int height) {
-  /*for (int i = thing.getHeight(); i<= height; i++)
-  {
-    digitalWrite (yCoord+7, LOW);
-  }*/
   for (int i = playerY; i <= height + 1; i++)
   {
       digitalWrite (playerY, HIGH);
@@ -184,23 +180,16 @@ void jumpDude(int height) {
       Serial.println ("jump dude : ");
       Serial.print (i);
   }
-  /*digitalWrite (playerY, HIGH);
-  playerY ++;
-  digitalWrite (playerY + 1, LOW);
-  delay (500);
-  digitalWrite (playerY, HIGH);
-  playerY ++;
-  digitalWrite (playerY + 1, LOW);*/
 }
 
 void moveObstacle() {
   //move all obstacle LEDs by 1 x-coordinate to the left
   //ie decrement x-coordinate of all obstacle LEDs
   xCoord --;
-  PORTD = B11111111;
+  //PORTD = B11111111;
   PORTB = B000000;
   digitalWrite(xCoord+7, HIGH);
-  if (yCoord ==1) {
+  /*if (yCoord ==1) {
     PORTD = B11111011;
   }
   else if(yCoord ==2) {
@@ -208,21 +197,47 @@ void moveObstacle() {
   }
   else if(yCoord ==3) {
     PORTD = B11100011;
-  }
+  }*/
 }
 
 void createObstacle(Obstacle thing) {
 
-  //height of 1:
-  if(thing.getHeight() == 1) {
-    PORTD = B11111000;
-    PORTB = B010000;
+  PORTB = B010000;
+  switch (thing.getHeight()){
+  case 2:
+    PORTD = B10000000;
+    //digitalWrite (decoder0, LOW);
+    //digitalWrite (decoder1, HIGH);
     xCoord =5;
-    yCoord=1;
+    yCoord=2;
+    break;
+  case 3:
+    PORTD = B01000000;
+    //digitalWrite (decoder0, HIGH);
+    //digitalWrite (decoder1, LOW);
+    xCoord =5;
+    yCoord=3;
+    break;
+  case 4:
+    PORTD = B00000000;
+    //digitalWrite (decoder0, LOW);
+    //digitalWrite (decoder1, LOW);
+    xCoord =5;
+    yCoord=4;
+    break;
   }
+  //height of 2:
+  //if(thing.getHeight() == 2 {
+    //PORTD = B11111000;
+    //PORTB = B010000;
+    //digitalWrite (decoder0, LOW);
+    //digitalWrite (decoder1, LOW);
+    //xCoord =5;
+    //yCoord=2;
+  //}
 
   //height of 2:
-  else if(thing.getHeight() == 2) {
+  /*else if(thing.getHeight() == 2) {
     PORTD = B11110000;
     PORTB = B010000;
     xCoord = 5;
@@ -235,7 +250,7 @@ void createObstacle(Obstacle thing) {
     PORTB = B010000;
     xCoord = 5;
     yCoord = 3;
-  }
+  }*/
   
 }
 
