@@ -120,7 +120,7 @@ void loop() {
   Serial.println("\ninterval:");
   Serial.println(thing.getInterval());
 
-  createObstacle(thing);
+  //createObstacle(thing);
   makeDude();
 
   delay(5000);
@@ -165,8 +165,8 @@ void readMic () {
 void makeDude()
 {
   Serial.println("dude is made");
-  digitalWrite (8, HIGH); //x coord
-  digitalWrite (2, LOW); //y coord
+  PORTB = B000001;
+  PORTD = B11110000;
 }
 
 void jumpDude(int height, Obstacle thing) {
