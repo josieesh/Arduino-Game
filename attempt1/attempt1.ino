@@ -2,7 +2,6 @@
 
 volatile double sensorValue = 0;
 int interruptPin = 2;
-double threshold =0;
 int xCoord;
 int yCoord;
 int playerY = 0;
@@ -46,38 +45,31 @@ double Obstacle::getInterval() {
 
 void setup() {
   delay(1000);
-  threshold = analogRead(A0);
   DDRD = B11111111;
   DDRB = B111111;    
 }
 
 //interrupt does not work on analog in???
-void readMic () {
-  sensorValue = analogRead(A0);
+int readMic () {
+  sensorValue = 1000.0 / analogRead(A0);
   Serial.println(sensorValue);
-  if (sensorValue > threshold) {
-    if (sensorValue < threshold +10) {
-      //jumpDude(2)
-      //obstacle x-coordinate ++
-      //hold jump
-      //obstacle x-coordinate ++
-      //come back down
+    if (sensorValue >= 2 && sensorValue < 3) {
+        return 1;
     }
-    else if(sensorValue < threshold +20) {
-      //jumpDude(3)
+    else if(sensorValue >= 3 && sensorValue < 4) {
+      return 2;
       
     }
-    else if(sensorValue <threshold +30) {
-      //jumpDude(4)
-      //
+    else if(sensorValue >= 4 && sensorValue <5) {
+      return 3;
     }
-    else {
-      //check if obstacle collides with dude
-      //if yes, call game over
-      //if not, move object closer to dude
+    else if (sensorValue >= 5) {
+      return 4;
     }
-  } 
-  delay(500);
+    else
+    {
+      return 0;
+    }
 }
 
 void jumpDude() {
@@ -85,6 +77,24 @@ void jumpDude() {
   playerY ++;
   digitalWrite (playerY + 1, LOW);
   delay (500);
+}
+
+void downDude(){
+  digitalWrite (playerY + 1, HIGH);
+  playerY --;
+  digitalWrite (playerY, LOW);
+  delay(500);
+}
+
+void resetDude() {
+  PORTD = B11111111;
+  while (playerY != 0)
+  {
+      delay(500);
+      digitalWrite (playerY + 1, HIGH);
+      playerY --;
+      digitalWrite (playerY, LOW);
+  }
 }
 
 void moveObstacle() {
@@ -109,7 +119,7 @@ bool checkForFail (Obstacle thing){
   PORTD = B11110000;
   break;
 }
-  jumpDude();
+  //jumpDude();
     
   if (playerY <= height)
     return true;
@@ -150,10 +160,20 @@ void loop() {
   Obstacle thing;
   createObstacle(thing);
   delay(500);
-  for (int i = 3; i >= 0; i--){
+  int jump = readMic();
+
+  while (jump == 0 && xCoord > 1)
+  {
+    delay(500);
+    moveObstacle();
+    jump = readMic();
+  }
+  if (jump >= 1){
+    for (int i = jump; i >= 0; i--){
     delay(500);
     moveObstacle();
     jumpDude();
+    }
   }
   delay (500);
   bool fail = checkForFail(thing);
@@ -162,7 +182,8 @@ void loop() {
     //DDRB = B111111; 
   }
 
-  playerY = 0;
+  resetDude();
+  //playerY = 0;
   
 }
 
