@@ -5,8 +5,7 @@ int interruptPin = 2;
 double threshold =0;
 int xCoord;
 int yCoord;
-int playerX;
-int playerY;
+int playerY = 0;
 int decoder0 = 6;
 int decoder1 = 7;
 
@@ -45,91 +44,16 @@ double Obstacle::getInterval() {
   return interval;
 };
 
-
-
-/*class Player {
-  private: 
-    int height;
-
-  public: 
-    Player(int h);
-    void jump(int jumpHeight);
-}
-
-Player::Player(int h) {
-  height = h;
-}
-
-void Player::jump(int jumpHeight) {
-  if (jumpHeight == 2) {
-    //animate
-    //(1,2), (1,3)
-    //bring obstacle closer
-    //(1,3), (1,4)
-    //bring obstacle closer
-    //then come back down
-  }
-  else if(jumpHeight == 3){
-    //animate
-    //(1,2), (1,3)
-    //bring obstacle closer
-    //(1,3), (1,4)
-    //bring obstacle closer
-    //(1,4), (1,5)
-    //bring obstacle closer
-    //then come back down 
-  }
-  else if(jumpHeight ==4){
-    //animate
-    //(1,2), (1,3)
-    //bring obstacle closer
-    //(1,3), (1,4)
-    //bring obstacle closer
-    //(1,4), (1,5)
-    //bring obstacle closer
-    //(1,5), (1,6)
-    //bring obstacle closer
-    //then come back down 
-  }
-  else {
-    //do nothing ie keep the bottom two lights on
-  }
-};
-
-*/
-
-
-
-
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Do not make noise, calibrating threshold value...");
   delay(1000);
   threshold = analogRead(A0);
-  Serial.print("Threshold value: ");
-  Serial.println(threshold);
-  DDRD = B11111110;
+  DDRD = B11111111;
   DDRB = B111111;    
 }
 
-void loop() {
-  
-  Obstacle thing;
-  Serial.println(thing.getHeight());
-  Serial.println("\ninterval:");
-  Serial.println(thing.getInterval());
-
-  createObstacle(thing);
-  /*makeDude();
-  delay(500);
-  jumpDude(3);*/
-  for (int i = 0; i < 5; i ++) {
-    delay(500);
-    moveObstacle();
-  }
-  
-
-  /*sensorValue = analogRead(A0);
+//interrupt does not work on analog in???
+void readMic () {
+  sensorValue = analogRead(A0);
   Serial.println(sensorValue);
   if (sensorValue > threshold) {
     if (sensorValue < threshold +10) {
@@ -153,51 +77,44 @@ void loop() {
       //if not, move object closer to dude
     }
   } 
-  delay(500);*/
+  delay(500);
 }
 
-//interrupt does not work on analog in???
-void readMic () {
-  sensorValue = analogRead(A0);
-}
-
-void makeDude()
-{
-  Serial.println("dude is made");
-  PORTB = B000001; //pin 8 high
-  PORTD = B11110000; //pin 2, 3 low 
-  playerX = 8;
-  playerY = 2;
-}
-
-void jumpDude(int height) {
-  for (int i = playerY; i <= height + 1; i++)
-  {
-      digitalWrite (playerY, HIGH);
-      playerY ++;
-      digitalWrite (playerY + 1, LOW);
-      delay (500);
-      Serial.println ("jump dude : ");
-      Serial.print (i);
-  }
+void jumpDude() {
+  digitalWrite (playerY, HIGH);
+  playerY ++;
+  digitalWrite (playerY + 1, LOW);
+  delay (500);
 }
 
 void moveObstacle() {
   //move all obstacle LEDs by 1 x-coordinate to the left
   //ie decrement x-coordinate of all obstacle LEDs
   xCoord --;
-  //PORTD = B11111111;
   PORTB = B000000;
-  digitalWrite(xCoord+7, HIGH);
-  /*if (yCoord ==1) {
-    PORTD = B11111011;
-  }
-  else if(yCoord ==2) {
-    PORTD = B11110011;
-  }
-  else if(yCoord ==3) {
-    PORTD = B11100011;
-  }*/
+  digitalWrite(xCoord+6, HIGH);
+}
+
+bool checkForFail (Obstacle thing){
+  int height = thing.getHeight();
+  PORTB = B000000;
+  switch (height){
+  case 2:
+  PORTD = B11111100;
+  break;
+  case 3:
+  PORTD = B11111000;
+  break;
+  case 4:
+  PORTD = B11110000;
+  break;
+}
+  jumpDude();
+    
+  if (playerY <= height)
+    return true;
+  else
+    return false;
 }
 
 void createObstacle(Obstacle thing) {
@@ -205,52 +122,47 @@ void createObstacle(Obstacle thing) {
   PORTB = B010000;
   switch (thing.getHeight()){
   case 2:
-    PORTD = B10000000;
+    PORTD = B10111100;
     //digitalWrite (decoder0, LOW);
     //digitalWrite (decoder1, HIGH);
-    xCoord =5;
+    xCoord =6;
     yCoord=2;
     break;
   case 3:
-    PORTD = B01000000;
+    PORTD = B01111100;
     //digitalWrite (decoder0, HIGH);
     //digitalWrite (decoder1, LOW);
-    xCoord =5;
+    xCoord =6;
     yCoord=3;
     break;
   case 4:
-    PORTD = B00000000;
+    PORTD = B00111100;
     //digitalWrite (decoder0, LOW);
     //digitalWrite (decoder1, LOW);
-    xCoord =5;
+    xCoord =6;
     yCoord=4;
     break;
   }
-  //height of 2:
-  //if(thing.getHeight() == 2 {
-    //PORTD = B11111000;
-    //PORTB = B010000;
-    //digitalWrite (decoder0, LOW);
-    //digitalWrite (decoder1, LOW);
-    //xCoord =5;
-    //yCoord=2;
-  //}
+}
 
-  //height of 2:
-  /*else if(thing.getHeight() == 2) {
-    PORTD = B11110000;
-    PORTB = B010000;
-    xCoord = 5;
-    yCoord = 2;
-  }
+void loop() {
   
-  //height of 3:
-  else {
-    PORTD = B11100000;
-    PORTB = B010000;
-    xCoord = 5;
-    yCoord = 3;
-  }*/
+  Obstacle thing;
+  createObstacle(thing);
+  delay(500);
+  for (int i = 3; i >= 0; i--){
+    delay(500);
+    moveObstacle();
+    jumpDude();
+  }
+  delay (500);
+  bool fail = checkForFail(thing);
+  if (fail){
+    //DDRD = B11111111;
+    //DDRB = B111111; 
+  }
+
+  playerY = 0;
   
 }
 
