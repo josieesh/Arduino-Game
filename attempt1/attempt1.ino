@@ -178,8 +178,7 @@ void loop() {
   delay (500);
   bool fail = checkForFail(thing);
   if (fail){
-    //DDRD = B11111111;
-    //DDRB = B111111; 
+   
   }
 
   resetDude();
