@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 volatile double sensorValue = 0;
-int interruptPin = 2;
+int interruptPin = 13;
 int xCoord;
 int yCoord;
 int playerY = 0;
@@ -46,7 +46,9 @@ double Obstacle::getInterval() {
 void setup() {
   delay(1000);
   DDRD = B11111111;
-  DDRB = B111111;    
+  DDRB = B111111; 
+
+  digitalWrite (interruptPin, HIGH);
 }
 
 //interrupt does not work on analog in???
@@ -58,7 +60,6 @@ int readMic () {
     }
     else if(sensorValue >= 3 && sensorValue < 4) {
       return 2;
-      
     }
     else if(sensorValue >= 4 && sensorValue <5) {
       return 3;
@@ -178,11 +179,14 @@ void loop() {
   delay (500);
   bool fail = checkForFail(thing);
   if (fail){
-   
+      //PORTB = B111111; //turn on all the lights and trigger interrupt pin
+      //PORTD = B00000000;
+      digitalWrite (interruptPin, HIGH);
+      //delay(500);
+      //digitalWrite (interruptPin, LOW);
   }
 
   resetDude();
-  //playerY = 0;
   
 }
 
