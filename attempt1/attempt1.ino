@@ -44,11 +44,9 @@ double Obstacle::getInterval() {
 };
 
 void setup() {
-  delay(1000);
+  //delay(1000);
   DDRD = B11111111;
   DDRB = B111111; 
-
-  digitalWrite (interruptPin, HIGH);
 }
 
 //interrupt does not work on analog in???
@@ -74,16 +72,16 @@ int readMic () {
 }
 
 void jumpDude() {
-  digitalWrite (playerY, HIGH);
+  digitalWrite (playerY, LOW);
   playerY ++;
-  digitalWrite (playerY + 1, LOW);
+  digitalWrite (playerY, HIGH);
   delay (500);
 }
 
 void downDude(){
-  digitalWrite (playerY + 1, HIGH);
-  playerY --;
   digitalWrite (playerY, LOW);
+  playerY --;
+  digitalWrite (playerY, HIGH);
   delay(500);
 }
 
@@ -102,13 +100,13 @@ void moveObstacle() {
   //move all obstacle LEDs by 1 x-coordinate to the left
   //ie decrement x-coordinate of all obstacle LEDs
   xCoord --;
-  PORTB = B000000;
+  PORTB = B100000;
   digitalWrite(xCoord+6, HIGH);
 }
 
 bool checkForFail (Obstacle thing){
   int height = thing.getHeight();
-  PORTB = B000000;
+  PORTB = B100000;
   switch (height){
   case 2:
   PORTD = B11111100;
@@ -130,7 +128,7 @@ bool checkForFail (Obstacle thing){
 
 void createObstacle(Obstacle thing) {
 
-  PORTB = B010000;
+  PORTB = B100000;
   switch (thing.getHeight()){
   case 2:
     PORTD = B10111100;
@@ -157,8 +155,11 @@ void createObstacle(Obstacle thing) {
 }
 
 void loop() {
-  
+  while (!digitalRead(5));
+    
   Obstacle thing;
+  //digitalWrite(interruptPin, LOW);
+  digitalWrite (interruptPin, HIGH);
   createObstacle(thing);
   delay(500);
   int jump = readMic();
@@ -176,17 +177,22 @@ void loop() {
     jumpDude();
     }
   }
-  delay (500);
+  //delay (500);
   bool fail = checkForFail(thing);
   if (fail){
       //PORTB = B111111; //turn on all the lights and trigger interrupt pin
       //PORTD = B00000000;
-      digitalWrite (interruptPin, HIGH);
+      //digitalWrite (interruptPin, HIGH);
+      digitalWrite (interruptPin, LOW);
       //delay(500);
       //digitalWrite (interruptPin, LOW);
   }
+  //digitalWrite (interruptPin, LOW);
+  
+  while (fail); //INFINTE LOOP FOR WHEN GAME IS OVER
 
-  resetDude();
+  resetDude(); 
+
   
 }
 
