@@ -2,6 +2,7 @@
 
 volatile double sensorValue = 0;
 int interruptPin = 13;
+int pin5 = 5;
 int xCoord;
 int yCoord;
 int playerY = 0;
@@ -155,8 +156,8 @@ void createObstacle(Obstacle thing) {
 }
 
 void loop() {
-  while (!digitalRead(5));
-    
+  while (!digitalRead(pin5));
+
   Obstacle thing;
   //digitalWrite(interruptPin, LOW);
   digitalWrite (interruptPin, HIGH);
@@ -189,10 +190,12 @@ void loop() {
   }
   //digitalWrite (interruptPin, LOW);
   
-  while (fail); //INFINTE LOOP FOR WHEN GAME IS OVER
+  while (fail && !digitalRead(pin5))
+  {
+     //INFINTE LOOP FOR WHEN GAME IS OVER
+  }
 
   resetDude(); 
-
-  
+  delay (100);  
 }
 
