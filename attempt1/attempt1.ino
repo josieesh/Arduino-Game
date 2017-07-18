@@ -73,16 +73,16 @@ int readMic () {
 }
 
 void jumpDude() {
-  digitalWrite (playerY, LOW);
-  playerY ++;
   digitalWrite (playerY, HIGH);
+  playerY ++;
+  digitalWrite (playerY, LOW);
   delay (500);
 }
 
 void downDude(){
-  digitalWrite (playerY, LOW);
-  playerY --;
   digitalWrite (playerY, HIGH);
+  playerY --;
+  digitalWrite (playerY, LOW);
   delay(500);
 }
 
@@ -91,9 +91,9 @@ void resetDude() {
   while (playerY != 0)
   {
       delay(500);
-      digitalWrite (playerY + 1, HIGH);
-      playerY --;
-      digitalWrite (playerY, LOW);
+  digitalWrite (playerY, LOW);
+  playerY --;
+  digitalWrite (playerY, HIGH);
   }
 }
 
@@ -119,7 +119,6 @@ bool checkForFail (Obstacle thing){
   PORTD = B11110000;
   break;
 }
-  //jumpDude();
     
   if (playerY <= height)
     return true;
@@ -132,27 +131,23 @@ void createObstacle(Obstacle thing) {
   PORTB = B100000;
   switch (thing.getHeight()){
   case 2:
-    PORTD = B10111100;
-    //digitalWrite (decoder0, LOW);
-    //digitalWrite (decoder1, HIGH);
+    PORTD = B10111110;
     xCoord =6;
     yCoord=2;
     break;
   case 3:
-    PORTD = B01111100;
-    //digitalWrite (decoder0, HIGH);
-    //digitalWrite (decoder1, LOW);
+    PORTD = B01111110;
     xCoord =6;
     yCoord=3;
     break;
   case 4:
-    PORTD = B00111100;
-    //digitalWrite (decoder0, LOW);
-    //digitalWrite (decoder1, LOW);
+    PORTD = B00111110;
     xCoord =6;
     yCoord=4;
     break;
   }
+
+  delay(500);
 }
 
 void loop() {
@@ -162,7 +157,6 @@ void loop() {
   //digitalWrite(interruptPin, LOW);
   digitalWrite (interruptPin, HIGH);
   createObstacle(thing);
-  delay(500);
   int jump = readMic();
 
   while (jump == 0 && xCoord > 1)
@@ -181,12 +175,7 @@ void loop() {
   //delay (500);
   bool fail = checkForFail(thing);
   if (fail){
-      //PORTB = B111111; //turn on all the lights and trigger interrupt pin
-      //PORTD = B00000000;
-      //digitalWrite (interruptPin, HIGH);
       digitalWrite (interruptPin, LOW);
-      //delay(500);
-      //digitalWrite (interruptPin, LOW);
   }
   //digitalWrite (interruptPin, LOW);
   
